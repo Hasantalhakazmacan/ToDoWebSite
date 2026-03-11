@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <button class="menu-toggle" id="menuToggle">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+
+    <div class="sidebar" id="sidebar">
+      <h3 style="color: var(--primary-color); text-align: center">
+        Kategoriler
+      </h3>
+
+      <% if (locals.successMessage && locals.successMessage.length > 0) { %>
+      <div class="flash-success"><%= locals.successMessage %></div>
+      <% } %> <% if (locals.errorMessage && locals.errorMessage.length > 0) { %>
+      <div class="flash-error"><%= locals.errorMessage %></div>
+      <% } %>
+
+      <ul class="category-filter-list">
+        <li>
+          <a
+            href="/?hideCompleted=<%= locals.hideCompleted || '' %>"
+            class="<%= !locals.currentCategory ? 'active' : '' %> category-link"
+          >
+            Tüm Görevler
+          </a>
+        </li>
+
+        <% categories.forEach(cat => { %>
+        <li class="category-item">
+          <a
+            href="/?category=<%= cat.name %>&hideCompleted=<%= locals.hideCompleted || '' %>"
+            class="<%= locals.currentCategory === cat.name ? 'active' : '' %> category-link"
+          >
+            <%= cat.name %>
+          </a>
+          <button
+            class="delete-category-btn"
+            data-id="<%= cat._id %>"
+            title="Kategoriyi Sil"
+          >
+            X
+          </button>
+        </li>
+        <% }); %>
+      </ul>
+
+      <h3>Yeni Kategori Ekle</h3>
+      <form action="/admin/categories" method="POST" class="category-add-form">
+        <input type="text" name="name" placeholder="Kategori adı" required />
+        <button type="submit">Ekle</button>
+      </form>
+    </div>
+
+    <script>
+      const SIDEBAR_STATE_KEY = "sidebarActive";
+      const savedState = localStorage.getItem(SIDEBAR_STATE_KEY);
+      const sidebarElement = document.getElementById("sidebar");
+
+      if (savedState === "true" && sidebarElement) {
+        sidebarElement.classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+    </script>
+
+    <div class="main-content">
+      <div class="container">
+        <div class="header-area">
+          <h2 class="user-greeting">Hoş geldin, <%= user.username %></h2>
+
+          <div style="display: flex; align-items: center">
+            <form action="/logout" method="POST">
+              <button type="submit" class="logout-btn">Çıkış Yap</button>
+            </form>
+          </div>
+        </div>
+
+        <h1><%= pageTitle %></h1>
+
+        <% if (locals.successMessage && locals.successMessage.length > 0) { %>
+        <div class="flash-success"><%= locals.successMessage %></div>
+        <% } %> <% if (locals.errorMessage && locals.errorMessage.length > 0) {
+        %>
+        <div class="flash-error"><%= locals.errorMessage %></div>
+        <% } %>
+
+        <form action="/" method="GET" class="filter-area">
+          <input
+            type="hidden"
+            name="category"
+            value="<%= locals.currentCategory || '' %>"
+          />
+
+          <div style="margin-left: auto">
+            <input type="checkbox" name="hideCompleted" id="hideCompleted"
+            value="true" <%= locals.hideCompleted === 'true' ? 'checked' : '' %>
+            onchange="this.form.submit()">
+            <label for="hideCompleted">Tamamlananları Gizle</label>
+          </div>
+        </form>
+
+        <hr />
+
+        <form action="/" method="POST" class="input-group">
+          <select name="category">
+            <% categories.forEach(cat => { %>
+            <option value="<%= cat.name %>"><%= cat.name %></option>
+            <% }); %>
+          </select>
+
+          <input
+            type="text"
+            name="title"
+            placeholder="Yeni yapılacak iş..."
+            required
+            style="flex-grow: 1"
+          />
+
+          <button type="submit" class="add-btn">Ekle</button>
+        </form>
+
+        <h2 style="margin-top: 30px">Yapılacaklar</h2>
+
+        <% if (todos && todos.length > 0) { %>
+        <ul>
+          <% todos.forEach(todo => { %>
+          <li class="<%= todo.completed ? 'completed' : '' %>" data-id="<%= todo._id %>">
+            <div class="task-info">
+              <span class="task-category">[<%- todo.category %>]</span>
+              <span class="task-title"><%= todo.title %></span>
+            </div>
+
+            <div class="edit-controls">
+              <select class="category-select">
+                <% categories.forEach(cat => { %>
+                  <option 
+                    value="<%= cat.name %>" 
+                    <%= todo.category === cat.name ? 'selected' : '' %>
+                  >
+                    <%= cat.name %>
+                  </option>
+                <% }); %>
+              </select>
+              <input type="text" class="title-input" value="<%= todo.title %>" required>
+              <button type="button" class="save-edit-btn">Kaydet</button>
+              <button type="button" class="cancel-edit-btn">İptal</button>
+            </div>
+
+            <div class="action-buttons">
+              <button type="button" class="edit-button" data-id="<%= todo._id %>">Düzenle</button>
+              
+              <form action="/toggle/<%= todo._id %>" method="POST">
+                <button
+                  type="submit"
+                  class="<%= todo.completed ? 'toggle-button-incomplete' : 'toggle-button-complete' %>"
+                >
+                  <%= todo.completed ? 'Geri Al' : 'Tamamla' %>
+                </button>
+              </form>
+
+              <form action="/delete/<%= todo._id %>" method="POST">
+                <button type="submit" class="delete-button">Sil</button>
+              </form>
+            </div>
+          </li>
+          <% }); %>
+        </ul>
+        <% } else { %>
+        <p class="empty-message">Listeniz boş! Haydi bir iş ekleyin. 🥳</p>
+        <% } %>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const sidebar = document.getElementById("sidebar");
+        const menuToggle = document.getElementById("menuToggle");
+        const categoryForm = document.querySelector(".category-add-form");
+        const categoryInput = categoryForm.querySelector('input[name="name"]');
+        const deleteCategoryButtons = document.querySelectorAll(
+          ".delete-category-btn"
+        );
+        
+        // Görev Düzenleme Elementleri
+        const editButtons = document.querySelectorAll('.edit-button');
+        const cancelButtons = document.querySelectorAll('.cancel-edit-btn');
+        const saveButtons = document.querySelectorAll('.save-edit-btn');
+        
+        const SIDEBAR_STATE_KEY = "sidebarActive";
+
+        // --- 1. SIDEBAR AÇMA/KAPAMA MANTIĞI ---
+        function toggleSidebar() {
+          const isActive = sidebar.classList.toggle("active");
+          localStorage.setItem(SIDEBAR_STATE_KEY, isActive ? "true" : "false");
+          document.body.style.overflow = isActive ? "hidden" : "auto";
+        }
+
+        if (menuToggle && sidebar) {
+          menuToggle.addEventListener("click", toggleSidebar);
+        }
+        
+        // --- 2. KATEGORİ EKLEME AJAX MANTIĞI ---
+        // (Mevcut kodunuz burada devam ediyor)
+        if (categoryForm) {
+          categoryForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const categoryName = categoryInput.value.trim();
+            if (!categoryName) {
+              showFlashMessage("Kategori adı boş bırakılamaz.", "error");
+              return;
+            }
+
+            try {
+              const response = await fetch("/admin/categories", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ name: categoryName }),
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                localStorage.setItem(SIDEBAR_STATE_KEY, "true");
+                window.location.reload();
+              } else {
+                showFlashMessage(data.message, "error");
+              }
+            } catch (error) {
+              showFlashMessage(
+                "Sunucuya bağlanırken beklenmeyen bir hata oluştu.",
+                "error"
+              );
+            }
+          });
+        }
+
+        // --- 3. KATEGORİ SİLME AJAX MANTIĞI ---
+        // (Mevcut kodunuz burada devam ediyor)
+        deleteCategoryButtons.forEach((button) => {
+          button.addEventListener("click", async (e) => {
+            const categoryId = button.dataset.id;
+
+            if (
+              !confirm(
+                "Bu kategoriyi ve bu kategoriye ait tüm görevleri silmek istediğinizden emin misiniz?"
+              )
+            ) {
+              return;
+            }
+
+            try {
+              const response = await fetch(`/admin/categories/${categoryId}`, {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                localStorage.setItem(SIDEBAR_STATE_KEY, "true");
+                window.location.reload();
+              } else {
+                showFlashMessage(data.message, "error");
+              }
+            } catch (error) {
+              showFlashMessage("Kategori silinirken sunucu hatası oluştu.", "error");
+            }
+          });
+        });
+
+
+        // --- 🚨 4. GÖREV DÜZENLEME (INLINE EDIT) MANTIĞI ---
+        
+        // Düzenle butonuna tıklayınca: Düzenleme moduna gir
+        editButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const li = button.closest('li');
+                li.classList.add('editing'); // CSS ile formu göster
+            });
+        });
+
+        // İptal butonuna tıklayınca: Düzenleme modundan çık ve değerleri sıfırla
+        cancelButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const li = button.closest('li');
+                li.classList.remove('editing'); 
+                
+                // Orijinal değerleri geri yükle (opsiyonel ama iyi UX için önemli)
+                // Orijinal değerler .task-info içindeki span'lardan okunur
+                const originalTitle = li.querySelector('.task-title').textContent;
+                // [Kategori] formatından Kategori'yi ayıkla
+                const originalCategoryElement = li.querySelector('.task-category');
+                const originalCategory = originalCategoryElement 
+                    ? originalCategoryElement.textContent.slice(1, -1) 
+                    : li.querySelector('.category-select').options[0].value; // Veya ilk seçeneği al
+
+                li.querySelector('.title-input').value = originalTitle;
+                li.querySelector('.category-select').value = originalCategory;
+            });
+        });
+
+        // Kaydet butonuna tıklayınca: AJAX PUT isteği gönder
+        saveButtons.forEach(button => {
+            button.addEventListener('click', async (e) => {
+                const li = button.closest('li');
+                const todoId = li.dataset.id;
+                const newTitle = li.querySelector('.title-input').value.trim();
+                const newCategory = li.querySelector('.category-select').value;
+
+                if (!newTitle) {
+                    alert('Görev başlığı boş olamaz!');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/edit/${todoId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ title: newTitle, category: newCategory })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Başarılı güncelleme: Arayüzü manuel güncelle
+                        li.querySelector('.task-title').textContent = data.todo.title;
+                        li.querySelector('.task-category').textContent = `[${data.todo.category}]`;
+                        
+                        // Select/Input değerlerini de yeni verilerle güncelle (zaten formdan geldikleri için zorunlu değil ama güvenlik için iyi)
+                        li.querySelector('.title-input').value = data.todo.title;
+                        li.querySelector('.category-select').value = data.todo.category;
+
+                        li.classList.remove('editing'); // Düzenleme modundan çık
+                        alert('Görev başarıyla güncellendi.'); // Basit geri bildirim
+                    } else {
+                        alert(`Hata: ${data.message}`);
+                    }
+                } catch (error) {
+                    console.error('Görev güncelleme hatası:', error);
+                    alert('Görev güncellenirken beklenmeyen bir hata oluştu.');
+                }
+            });
+        });
+        // --- 🚨 GÖREV DÜZENLEME MANTIĞI BİTİŞ ---
+        
+        // Basit Flash Mesajı Gösterme Fonksiyonu
+        function showFlashMessage(message, type) {
+          const existingMsg = document.querySelector(
+            ".sidebar .flash-success, .sidebar .flash-error"
+          );
+          if (existingMsg) existingMsg.remove();
+
+          const msgDiv = document.createElement("div");
+          msgDiv.className =
+            type === "success" ? "flash-success" : "flash-error";
+          msgDiv.textContent = message;
+
+          const sidebar = document.querySelector(".sidebar");
+          sidebar.insertBefore(msgDiv, sidebar.querySelector("h3").nextSibling);
+
+          setTimeout(() => msgDiv.remove(), 5000);
+        }
+      });
+    </script>
+  </body>
+</html>
+

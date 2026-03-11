@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hoş Geldiniz</title>
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      .landing-container {
+        max-width: 600px;
+        text-align: center;
+        padding: 40px;
+        margin: 100px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .landing-container h1 {
+        color: #4caf50;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+      }
+      .landing-container p {
+        font-size: 1.1em;
+        color: #666;
+        margin-bottom: 30px;
+      }
+      .landing-buttons a {
+        text-decoration: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: bold;
+        display: inline-block;
+        margin: 0 10px;
+        transition: background-color 0.3s;
+      }
+      .login-btn {
+        background-color: #4caf50;
+        color: white;
+      }
+      .register-btn {
+        background-color: #f0f0f0;
+        color: #4caf50;
+        border: 2px solid #4caf50;
+      }
+      .login-btn:hover {
+        background-color: #45a049;
+      }
+      .register-btn:hover {
+        background-color: #e0e0e0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container landing-container">
+      <h1>Görevlerini Yönet</h1>
+      <p>
+        Giriş yaparak kişisel To-Do listenize erişin, görevlerinizi kategorilere
+        ayırın ve üretkenliğinizi artırın.
+      </p>
+
+      <div class="landing-buttons">
+        <a href="/login" class="login-btn">Giriş Yap</a>
+        <a href="/register" class="register-btn">Hemen Kayıt Ol</a>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,432 @@
+/* public/style.css (SIDEBAR GİZLEME VE HAMBURGER İKONU - FİNAL DÜZENLEME) */
+
+/* --- 1. GENEL AYARLAR VE PALET --- */
+:root {
+    --primary-color: #3b82f6; /* Mavi (Ana vurgu) */
+    --secondary-color: #10b981; /* Yeşil (Ekle butonu) */
+    --warning-color: #f97316; /* Turuncu (Geri Al) */
+    --danger-color: #ef4444; /* Kırmızı (Sil) */
+    --background-color: #f7f9fc;
+    --card-color: #ffffff;
+    --text-color: #1f2937;
+    --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-medium: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex; /* Ana içeriği düzenlemek için eklendi */
+    justify-content: flex-start; /* İçeriği sola hizalar */
+}
+
+/* 1. YAN PANEL (SIDEBAR) BAŞLANGIÇ STİLİ */
+.sidebar {
+    width: 280px;
+    background-color: var(--card-color);
+    height: 100vh;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    padding: 30px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+    padding-bottom: 80px;
+}
+
+
+.sidebar.active {
+    transform: translateX(0);
+}
+
+/* 2. HAMBURGER BUTONU STİLİ */
+.menu-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 25px;
+    width: 30px;
+}
+
+.menu-toggle .bar {
+    display: block;
+    width: 30px;
+    height: 4px;
+    background-color: var(--primary-color);
+    border-radius: 2px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* --- ANA İÇERİK (MAIN CONTENT) --- */
+.main-content {
+    /* Hamburger butonu için soldan padding, genel boşluklar */
+    padding: 20px 40px 20px 80px; 
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    transition: margin-left 0.3s ease; 
+}
+
+/* Sidebar açıldığında ana içerik sağa kayar */
+.sidebar.active ~ .main-content {
+    margin-left: 280px;
+}
+
+.container {
+    background-color: var(--card-color);
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-medium);
+    width: 100%;
+    margin: 40px 0;
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-top: 0;
+}
+
+/* --- YAN PANEL İÇİ STİLLER --- */
+.sidebar h3 {
+    color: var(--primary-color);
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-top: 20px;
+}
+
+.category-filter-list {
+    list-style: none;
+    padding: 0;
+}
+
+/* 🚨 Kategori Öğelerini ve Silme Butonunu Düzenleme */
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px; 
+    padding: 0; 
+    background-color: transparent !important; 
+    border: none !important; 
+}
+
+.category-filter-list a {
+    display: block;
+    padding: 8px 10px;
+    text-decoration: none;
+    color: var(--text-color);
+    background-color: #f7f9fc;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+/* Kategori linkinin esnek şekilde genişlemesini sağlar */
+.category-item .category-link {
+    flex-grow: 1; /* Linkin tüm boş alanı kaplamasını sağlar */
+    margin-right: 5px;
+}
+
+
+.category-filter-list a:hover,
+.category-filter-list .active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* 🚨 Silme Butonu Stili */
+.delete-category-btn {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7em;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    flex-shrink: 0; /* Butonun küçülmesini engeller */
+}
+
+.delete-category-btn:hover {
+    background-color: #c53030;
+}
+
+
+/* --- Kategori Ekleme Formu --- */
+.category-add-form {
+    display: flex;
+    flex-direction: column; /* Alt alta düzenleme */
+    gap: 10px;
+    margin-top: 15px;
+    padding: 15px 0;
+    border-top: 1px dashed #e0e0e0;
+    margin-bottom: 40px;
+}
+
+.category-add-form input[type="text"] {
+    width: 100%;
+    box-sizing: border-box; /* Padding'in genişliğe dahil edilmesini sağlar */
+    padding: 10px;
+}
+
+.category-add-form button {
+    width: 100%; /* Butonun tam genişliği kaplamasını sağlar */
+    box-sizing: border-box; /* Butonun tam genişliğe sığması için eklendi */
+    background-color: var(--secondary-color);
+    padding: 10px;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* --- DİĞER ANA İÇERİK STİLLERİ --- */
+.header-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 15px;
+}
+
+.user-greeting {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.logout-btn {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Flash Mesajları */
+.flash-success {
+    background-color: #d1fae5;
+    color: #065f46;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.flash-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* --- EKLEME ve FİLTRE FORMLARI --- */
+.filter-area {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 15px;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+select,
+input[type="text"] {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+input[type="text"] {
+    flex-grow: 1;
+}
+
+.add-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* --- LİSTE STİLİ ve BUTONLAR --- */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.task-category {
+    font-size: 0.8em;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.completed {
+    background-color: #eef2ff;
+    border-left: 5px solid var(--primary-color);
+    opacity: 0.7;
+}
+
+.completed .task-title {
+    text-decoration: line-through;
+    color: #6b7280;
+}
+
+.action-buttons button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+}
+
+.toggle-button-complete {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.toggle-button-incomplete {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+.delete-button {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* 🚨 GÖREV DÜZENLEME STİLLERİ (YENİ EKLENEN KISIM) */
+
+/* Görev satırının düzenleme modunda esnek düzenlenmesi */
+li.editing {
+    background-color: #fffbeb; /* Hafif sarımsı arka plan */
+    border: 1px solid var(--warning-color);
+    padding: 10px 20px;
+}
+
+/* Düzenleme modunda gizlenecek öğeler */
+li.editing .task-info,
+li.editing .delete-button,
+li.editing .toggle-button-complete,
+li.editing .toggle-button-incomplete,
+li .edit-button,
+li.editing .action-buttons {
+    display: none;
+}
+
+/* Sadece düzenleme modunda görünen form ve butonlar */
+li.editing .edit-controls,
+li .edit-button {
+    display: flex;
+}
+
+/* Varsayılan olarak gizlenmesi gereken düzenleme kontrolleri */
+.edit-controls {
+    display: none;
+    flex-grow: 1;
+    gap: 10px;
+    align-items: center;
+    margin-right: -10px; /* Butonların dışarı taşmasını engeller */
+}
+
+.edit-controls input[type="text"],
+.edit-controls select {
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.edit-controls .title-input {
+    flex-grow: 1; /* Başlık alanının genişlemesini sağlar */
+}
+
+.edit-controls .category-select {
+    width: 120px;
+}
+
+/* Yeni Düzenle Butonu Stili */
+.edit-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Kaydet ve İptal Butonları */
+.save-edit-btn {
+    background-color: var(--secondary-color);
+    color: white;
+}
+.cancel-edit-btn {
+    background-color: #6b7280; /* Gri */
+    color: white;
+}
+.save-edit-btn, .cancel-edit-btn {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Varsayılan görünümde aksiyon butonlarını düzenle butonu için yer açmak için hizala */
+.action-buttons {
+    display: flex;
+    gap: 8px; /* Butonlar arasına boşluk ekler */
+}

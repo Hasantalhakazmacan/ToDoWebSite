@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      /* Bu sayfaya özel stil güncellemeleri */
+      .auth-container {
+        max-width: 400px;
+        margin: 100px auto;
+        padding: 30px;
+      }
+      .auth-container h1 {
+        color: #4caf50;
+      }
+      .error-message {
+        color: red;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+      .auth-form input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+      .auth-form button {
+        width: 100%;
+        padding: 12px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container auth-container">
+      <h1>Giriş Yap</h1>
+
+      <% if (errorMessage) { %>
+      <p class="error-message"><%= errorMessage %></p>
+      <% } %>
+
+      <form action="/login" method="POST" class="auth-form">
+        <input
+          type="text"
+          name="emailOrUsername"
+          placeholder="Kullanıcı Adı veya E-posta"
+          required
+        />
+
+        <input type="password" name="password" placeholder="Şifre" required />
+
+        <button type="submit">Giriş Yap</button>
+      </form>
+      <p style="text-align: center; margin-top: 15px">
+        Hesabınız yok mu? <a href="/register">Kayıt Ol</a>
+      </p>
+    </div>
+  </body>
+</html>
