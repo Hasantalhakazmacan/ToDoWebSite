@@ -1,5 +1,3 @@
-// models/categoryModel.js
-
 const mongoose = require("mongoose");
 
 const categorySchema = new mongoose.Schema({
@@ -12,7 +10,6 @@ const categorySchema = new mongoose.Schema({
 
 const Category = mongoose.model("Category", categorySchema);
 
-// Helper functions
 Category.getAllCategories = async function () {
   return this.find().sort({ name: 1 }).exec();
 };

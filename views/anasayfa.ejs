@@ -188,14 +188,11 @@
           ".delete-category-btn"
         );
         
-        // Görev Düzenleme Elementleri
         const editButtons = document.querySelectorAll('.edit-button');
         const cancelButtons = document.querySelectorAll('.cancel-edit-btn');
         const saveButtons = document.querySelectorAll('.save-edit-btn');
         
         const SIDEBAR_STATE_KEY = "sidebarActive";
-
-        // --- 1. SIDEBAR AÇMA/KAPAMA MANTIĞI ---
         function toggleSidebar() {
           const isActive = sidebar.classList.toggle("active");
           localStorage.setItem(SIDEBAR_STATE_KEY, isActive ? "true" : "false");
@@ -206,8 +203,6 @@
           menuToggle.addEventListener("click", toggleSidebar);
         }
         
-        // --- 2. KATEGORİ EKLEME AJAX MANTIĞI ---
-        // (Mevcut kodunuz burada devam ediyor)
         if (categoryForm) {
           categoryForm.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -243,9 +238,6 @@
             }
           });
         }
-
-        // --- 3. KATEGORİ SİLME AJAX MANTIĞI ---
-        // (Mevcut kodunuz burada devam ediyor)
         deleteCategoryButtons.forEach((button) => {
           button.addEventListener("click", async (e) => {
             const categoryId = button.dataset.id;
@@ -280,10 +272,6 @@
           });
         });
 
-
-        // --- 🚨 4. GÖREV DÜZENLEME (INLINE EDIT) MANTIĞI ---
-        
-        // Düzenle butonuna tıklayınca: Düzenleme moduna gir
         editButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const li = button.closest('li');
@@ -291,27 +279,21 @@
             });
         });
 
-        // İptal butonuna tıklayınca: Düzenleme modundan çık ve değerleri sıfırla
         cancelButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const li = button.closest('li');
                 li.classList.remove('editing'); 
-                
-                // Orijinal değerleri geri yükle (opsiyonel ama iyi UX için önemli)
-                // Orijinal değerler .task-info içindeki span'lardan okunur
                 const originalTitle = li.querySelector('.task-title').textContent;
-                // [Kategori] formatından Kategori'yi ayıkla
                 const originalCategoryElement = li.querySelector('.task-category');
                 const originalCategory = originalCategoryElement 
                     ? originalCategoryElement.textContent.slice(1, -1) 
-                    : li.querySelector('.category-select').options[0].value; // Veya ilk seçeneği al
+                    : li.querySelector('.category-select').options[0].value; 
 
                 li.querySelector('.title-input').value = originalTitle;
                 li.querySelector('.category-select').value = originalCategory;
             });
         });
 
-        // Kaydet butonuna tıklayınca: AJAX PUT isteği gönder
         saveButtons.forEach(button => {
             button.addEventListener('click', async (e) => {
                 const li = button.closest('li');
@@ -336,16 +318,13 @@
                     const data = await response.json();
 
                     if (data.success) {
-                        // Başarılı güncelleme: Arayüzü manuel güncelle
                         li.querySelector('.task-title').textContent = data.todo.title;
                         li.querySelector('.task-category').textContent = `[${data.todo.category}]`;
-                        
-                        // Select/Input değerlerini de yeni verilerle güncelle (zaten formdan geldikleri için zorunlu değil ama güvenlik için iyi)
                         li.querySelector('.title-input').value = data.todo.title;
                         li.querySelector('.category-select').value = data.todo.category;
 
-                        li.classList.remove('editing'); // Düzenleme modundan çık
-                        alert('Görev başarıyla güncellendi.'); // Basit geri bildirim
+                        li.classList.remove('editing'); 
+                        alert('Görev başarıyla güncellendi.'); 
                     } else {
                         alert(`Hata: ${data.message}`);
                     }
@@ -355,9 +334,6 @@
                 }
             });
         });
-        // --- 🚨 GÖREV DÜZENLEME MANTIĞI BİTİŞ ---
-        
-        // Basit Flash Mesajı Gösterme Fonksiyonu
         function showFlashMessage(message, type) {
           const existingMsg = document.querySelector(
             ".sidebar .flash-success, .sidebar .flash-error"

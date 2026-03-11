@@ -1,6 +1,3 @@
-// controllers/authController.js (Kullanıcı Adı ve Giriş Mantığı)
-
-// 🚨 KRİTİK DÜZELTME: Doğru dosya adını kullanın:
 const User = require('../models/userModel'); 
 
 // --- KAYIT İŞLEMLERİ ---

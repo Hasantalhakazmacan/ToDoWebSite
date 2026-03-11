@@ -1,9 +1,6 @@
-// controllers/adminController.js (GÜNCEL: POST ve DELETE fonksiyonları)
-
 const Category = require("../models/categoryModel");
-const { Todo } = require("../models/todoModel"); // Kategoriye ait görevleri silmek için Todo modeli gerekli
+const { Todo } = require("../models/todoModel"); 
 
-// POST /admin/categories - Yeni kategori ekle (AJAX/Fetch API için)
 exports.postCategory = async (req, res) => {
   const { name } = req.body;
 
@@ -33,13 +30,12 @@ exports.postCategory = async (req, res) => {
   }
 };
 
-// 🚨 YENİ FONKSİYON: Kategori Silme
-// DELETE /admin/categories/:id - Kategori silme (AJAX/Fetch API için)
+
 exports.deleteCategory = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // 1. Kategoriyi sil
+    
     const deletedCategory = await Category.findByIdAndDelete(id);
 
     if (!deletedCategory) {
@@ -48,7 +44,6 @@ exports.deleteCategory = async (req, res) => {
         .json({ success: false, message: "Kategori bulunamadı." });
     }
 
-    // 2. Bu kategoriye ait tüm görevleri de sil (Önerilir)
     await Todo.deleteMany({ category: deletedCategory.name });
 
     res.status(200).json({

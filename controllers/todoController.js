@@ -1,21 +1,12 @@
-// controllers/todoController.js (Tüm Filtreler, Flash Mesajları ve GÖREV DÜZENLEME Eklendi)
-
 const todoModel = require("../models/todoModel");
 const categoryModel = require("../models/categoryModel"); // Category Modelini dahil et
 
-// 1. READ: Listeleme ve Filtreleme
 exports.getTodosPage = async (req, res) => {
   try {
     const userId = req.session.userId;
-
-    // URL sorgusundan filtreleri al
     const categoryFilter = req.query.category;
-    const hideCompleted = req.query.hideCompleted; // true veya undefined
-
-    // Kategorileri veritabanından çek
+    const hideCompleted = req.query.hideCompleted;
     const allCategories = await categoryModel.getAllCategories();
-
-    // Model'e tüm filtreleri gönder
     const todoList = await todoModel.getAllTodos(
       userId,
       categoryFilter,
@@ -25,26 +16,24 @@ exports.getTodosPage = async (req, res) => {
     res.render("anasayfa", {
       pageTitle: "Yapılacaklar Listesi",
       todos: todoList,
-      // View'e filtre durumunu geri gönder
       currentCategory: categoryFilter || "",
       hideCompleted: hideCompleted,
-      categories: allCategories, // View'e gönder
+      categories: allCategories, 
     });
   } catch (error) {
     console.error("Veri okuma hatası:", error);
-    // Hata durumunda mesaj göster
     req.flash("error", "Görevler yüklenirken bir sorun oluştu.");
     res.status(500).render("anasayfa", {
       pageTitle: "Hata",
       todos: [],
       currentCategory: "",
       hideCompleted: undefined,
-      categories: [], // Hata durumunda bile boş dizi gönderilmeli
+      categories: [], 
     });
   }
 };
 
-// 2. CREATE: Yeni işi oturumdaki kullanıcıya ve kategoriye atar (POST /)
+
 exports.addTodoItem = async (req, res) => {
   const { title, category } = req.body;
   const userId = req.session.userId;
@@ -52,7 +41,6 @@ exports.addTodoItem = async (req, res) => {
   if (title && title.trim().length > 0) {
     try {
       await todoModel.addTodo(title, userId, category);
-      // BAŞARI MESAJI
       req.flash("success", "Yeni görev başarıyla eklendi!");
     } catch (error) {
       console.error("MongoDB Ekleme Hatası Detayı:", error);
@@ -64,7 +52,6 @@ exports.addTodoItem = async (req, res) => {
   res.redirect("/");
 };
 
-// 3. DELETE: Belirli bir işi siler (POST /delete/:id)
 exports.deleteTodoItem = async (req, res) => {
   const todoId = req.params.id;
   const userId = req.session.userId;
@@ -72,7 +59,6 @@ exports.deleteTodoItem = async (req, res) => {
   try {
     const deletedItem = await todoModel.deleteTodo(todoId, userId);
     if (deletedItem) {
-      // BAŞARI MESAJI
       req.flash("success", "Görev başarıyla silindi.");
     } else {
       req.flash("error", "Silinecek görev bulunamadı veya yetkiniz yok.");
@@ -84,7 +70,6 @@ exports.deleteTodoItem = async (req, res) => {
   res.redirect("/");
 };
 
-// 4. UPDATE: Tamamlanma durumunu değiştirir (POST /toggle/:id)
 exports.toggleTodoItem = async (req, res) => {
   const todoId = req.params.id;
   const userId = req.session.userId;
@@ -104,14 +89,10 @@ exports.toggleTodoItem = async (req, res) => {
   res.redirect("/");
 };
 
-// 🚨 YENİ: Görev Düzenleme/Güncelleme Fonksiyonu (PUT /edit/:id)
 exports.putTodoItem = async (req, res) => {
   const { id } = req.params;
   const userId = req.session.userId;
-  // AJAX'tan gelen yeni başlık ve kategori adını al
   const { title, category } = req.body;
-
-  // Basit doğrulama
   if (!title || title.trim() === "") {
     return res
       .status(400)
@@ -134,7 +115,7 @@ exports.putTodoItem = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Görev başarıyla güncellendi.",
-      todo: updatedTodo, // Frontend'e güncellenmiş veriyi geri gönder
+      todo: updatedTodo, 
     });
   } catch (error) {
     console.error("Görev güncellenirken hata:", error);
